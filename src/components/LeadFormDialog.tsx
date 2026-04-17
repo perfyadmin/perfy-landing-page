@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, CheckCircle2, Send } from "lucide-react";
+import { Mail, CheckCircle2, Send, Loader2 } from "lucide-react";
 import { z } from "zod";
+import axios from "axios";
+import { toast } from "sonner";
+import { API_URL } from "@/lib/api";
 
 const ADMIN_EMAIL = "perfy.admin@gmail.com";
 
@@ -35,6 +38,7 @@ export default function LeadFormDialog({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const reset = () => {
     setForm({ name: "", email: "", phone: "", organization: "", message: "" });
@@ -47,7 +51,7 @@ export default function LeadFormDialog({
     onOpenChange(next);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = schema.safeParse(form);
     if (!result.success) {
@@ -59,29 +63,23 @@ export default function LeadFormDialog({
       return;
     }
     setErrors({});
+    setIsSubmitting(true);
 
-    const subject = `[Perfy Lead] ${intent}${productContext ? " — " + productContext : ""}`;
-    const body = [
-      `New lead request from Perfy website`,
-      ``,
-      `Intent: ${intent}`,
-      productContext ? `Product: ${productContext}` : "",
-      ``,
-      `Name: ${form.name}`,
-      `Email: ${form.email}`,
-      `Phone: ${form.phone}`,
-      `Organization: ${form.organization || "—"}`,
-      ``,
-      `Message:`,
-      form.message || "—",
-      ``,
-      `--`,
-      `Sent from perfy.app`,
-    ].filter(Boolean).join("\n");
+    try {
+      await axios.post(`${API_URL}/api/leads`, {
+        ...form,
+        intent,
+        productContext,
+      });
 
-    const mailto = `mailto:${ADMIN_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-    setSent(true);
+      setSent(true);
+      toast.success("Request sent successfully!");
+    } catch (err: any) {
+      console.error("Lead submission error:", err);
+      toast.error(err.response?.data?.message || "Failed to send request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -151,8 +149,16 @@ export default function LeadFormDialog({
                 <Textarea id="msg" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
                   placeholder="Tell us about your requirement..." rows={3} className="mt-1 resize-none" />
               </div>
-              <Button type="submit" variant="hero" className="w-full mt-2">
-                <Send className="w-4 h-4" /> Send Request
+              <Button type="submit" variant="hero" className="w-full mt-2" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" /> Send Request
+                  </>
+                )}
               </Button>
               <p className="text-[11px] text-center text-muted-foreground">
                 {productContext
