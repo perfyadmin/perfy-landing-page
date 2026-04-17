@@ -2,7 +2,9 @@ import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { L as Link } from "../_libs/tanstack__react-router.mjs";
 import { B as Button, L as Label, I as Input, l as loadPricing, c as cn } from "./pricing-store-D7hCoaNa.mjs";
 import { R as Root, P as Portal, C as Content, a as Close, T as Title, D as Description, O as Overlay } from "../_libs/radix-ui__react-dialog.mjs";
-import { X, M as Menu, C as CircleCheck, c as Mail, d as Send, e as Sparkles, A as ArrowRight, F as FileText, U as Users, f as Layers, g as ChartColumn, T as TriangleAlert, G as GraduationCap, B as Building2, h as UserX, i as ClipboardList, j as Target, k as Brain, l as Compass, m as Shield, n as TrendingUp, o as Lightbulb, H as Heart, p as Mountain, q as Globe, r as BookOpen, s as Star, t as Briefcase, u as UserCheck, v as ArrowUpRight, L as Lock, w as Building, x as Check, y as Download, z as ExternalLink } from "../_libs/lucide-react.mjs";
+import { a as axios } from "../_libs/axios.mjs";
+import { t as toast } from "../_libs/sonner.mjs";
+import { X, M as Menu, C as CircleCheck, c as Mail, d as LoaderCircle, e as Send, f as Sparkles, A as ArrowRight, F as FileText, U as Users, g as Layers, h as ChartColumn, T as TriangleAlert, G as GraduationCap, B as Building2, i as UserX, j as ClipboardList, k as Target, l as Brain, m as Compass, n as Shield, o as TrendingUp, p as Lightbulb, H as Heart, q as Mountain, r as Globe, s as BookOpen, t as Star, u as Briefcase, v as UserCheck, w as ArrowUpRight, L as Lock, x as Building, y as Check, z as Download, I as ExternalLink } from "../_libs/lucide-react.mjs";
 import { o as objectType, s as stringType } from "../_libs/zod.mjs";
 import "../_libs/tanstack__router-core.mjs";
 import "../_libs/tanstack__history.mjs";
@@ -44,6 +46,43 @@ import "../_libs/get-nonce.mjs";
 import "../_libs/use-sidecar.mjs";
 import "../_libs/use-callback-ref.mjs";
 import "../_libs/aria-hidden.mjs";
+import "../_libs/form-data.mjs";
+import "fs";
+import "../_libs/combined-stream.mjs";
+import "../_libs/delayed-stream.mjs";
+import "path";
+import "http";
+import "https";
+import "url";
+import "../_libs/mime-types.mjs";
+import "../_libs/mime-db.mjs";
+import "../_libs/asynckit.mjs";
+import "../_libs/es-set-tostringtag.mjs";
+import "../_libs/get-intrinsic.mjs";
+import "../_libs/es-object-atoms.mjs";
+import "../_libs/es-errors.mjs";
+import "../_libs/math-intrinsics.mjs";
+import "../_libs/gopd.mjs";
+import "../_libs/es-define-property.mjs";
+import "../_libs/has-symbols.mjs";
+import "../_libs/get-proto.mjs";
+import "../_libs/dunder-proto.mjs";
+import "../_libs/call-bind-apply-helpers.mjs";
+import "../_libs/function-bind.mjs";
+import "../_libs/hasown.mjs";
+import "../_libs/has-tostringtag.mjs";
+import "../_libs/proxy-from-env.mjs";
+import "http2";
+import "../_libs/follow-redirects.mjs";
+import "assert";
+import "../_libs/debug.mjs";
+import "../_libs/ms.mjs";
+import "tty";
+import "../_libs/supports-color.mjs";
+import "os";
+import "../_libs/has-flag.mjs";
+import "zlib";
+import "events";
 const perfyLogo = "/assets/perfy-logo-Bl9trzXr.png";
 function IntroAnimation({ onComplete }) {
   const [phase, setPhase] = reactExports.useState("neural");
@@ -232,6 +271,7 @@ const Textarea = reactExports.forwardRef(
   }
 );
 Textarea.displayName = "Textarea";
+const API_URL = "https://perfy-backend.vercel.app";
 const ADMIN_EMAIL = "perfy.admin@gmail.com";
 const schema = objectType({
   name: stringType().trim().min(2, "Name required").max(100),
@@ -256,6 +296,7 @@ function LeadFormDialog({
   });
   const [errors, setErrors] = reactExports.useState({});
   const [sent, setSent] = reactExports.useState(false);
+  const [isSubmitting, setIsSubmitting] = reactExports.useState(false);
   const reset = () => {
     setForm({ name: "", email: "", phone: "", organization: "", message: "" });
     setErrors({});
@@ -265,7 +306,7 @@ function LeadFormDialog({
     if (!next) setTimeout(reset, 300);
     onOpenChange(next);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const result = schema.safeParse(form);
     if (!result.success) {
@@ -277,27 +318,21 @@ function LeadFormDialog({
       return;
     }
     setErrors({});
-    const subject = `[Perfy Lead] ${intent}${productContext ? " — " + productContext : ""}`;
-    const body = [
-      `New lead request from Perfy website`,
-      ``,
-      `Intent: ${intent}`,
-      productContext ? `Product: ${productContext}` : "",
-      ``,
-      `Name: ${form.name}`,
-      `Email: ${form.email}`,
-      `Phone: ${form.phone}`,
-      `Organization: ${form.organization || "—"}`,
-      ``,
-      `Message:`,
-      form.message || "—",
-      ``,
-      `--`,
-      `Sent from perfy.app`
-    ].filter(Boolean).join("\n");
-    const mailto = `mailto:${ADMIN_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-    setSent(true);
+    setIsSubmitting(true);
+    try {
+      await axios.post(`${API_URL}/api/leads`, {
+        ...form,
+        intent,
+        productContext
+      });
+      setSent(true);
+      toast.success("Request sent successfully!");
+    } catch (err) {
+      console.error("Lead submission error:", err);
+      toast.error(err.response?.data?.message || "Failed to send request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Dialog, { open, onOpenChange: handleClose, children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContent, { className: "glass-card rounded-2xl max-w-md", children: sent ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "py-6 text-center", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center mb-4 shadow-lg", children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "w-9 h-9 text-white" }) }),
@@ -396,10 +431,13 @@ function LeadFormDialog({
           }
         )
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "submit", variant: "hero", className: "w-full mt-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { type: "submit", variant: "hero", className: "w-full mt-2", disabled: isSubmitting, children: isSubmitting ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "w-4 h-4 animate-spin" }),
+        " Sending..."
+      ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "w-4 h-4" }),
         " Send Request"
-      ] }),
+      ] }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[11px] text-center text-muted-foreground", children: productContext ? "Demo access requires admin approval. You'll receive a secure link after approval." : "Your details are sent directly to our sales team." })
     ] })
   ] }) }) });
@@ -1120,10 +1158,12 @@ function useScrollReveal() {
   }, []);
 }
 function Index() {
-  const [showIntro, setShowIntro] = reactExports.useState(() => {
-    if (typeof window === "undefined") return true;
-    return sessionStorage.getItem("perfy_intro_seen") !== "1";
-  });
+  const [showIntro, setShowIntro] = reactExports.useState(true);
+  reactExports.useEffect(() => {
+    if (sessionStorage.getItem("perfy_intro_seen") === "1") {
+      setShowIntro(false);
+    }
+  }, []);
   const handleComplete = reactExports.useCallback(() => {
     sessionStorage.setItem("perfy_intro_seen", "1");
     setShowIntro(false);

@@ -31,7 +31,7 @@ export default function Navbar() {
               </a>
             ))}
             <Button variant="hero" size="sm" onClick={() => setLeadOpen(true)}>
-              Request Demo
+              Get Started Now
             </Button>
           </div>
 

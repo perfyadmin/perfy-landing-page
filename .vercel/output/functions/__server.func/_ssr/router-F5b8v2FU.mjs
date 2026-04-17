@@ -13,7 +13,7 @@ import "crypto";
 import "async_hooks";
 import "stream";
 import "../_libs/isbot.mjs";
-const appCss = "/assets/styles-Ct-bEpH5.css";
+const appCss = "/assets/styles-BpsMuuc6.css";
 const perfyFavicon = "/assets/perfy-logo-Bl9trzXr.png";
 function NotFoundComponent() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex min-h-screen items-center justify-center bg-background px-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-md text-center", children: [
@@ -82,7 +82,7 @@ const Route$1 = createFileRoute("/admin")({
     }]
   })
 });
-const $$splitComponentImporter = () => import("./index-BNLRfTvY.mjs");
+const $$splitComponentImporter = () => import("./index-2a_bTrCI.mjs");
 const Route = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter, "component"),
   head: () => ({
