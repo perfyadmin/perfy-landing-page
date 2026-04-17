@@ -28,10 +28,13 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   // Skip intro on subsequent visits in same session for faster iteration
-  const [showIntro, setShowIntro] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return sessionStorage.getItem("perfy_intro_seen") !== "1";
-  });
+  const [showIntro, setShowIntro] = useState(true);
+  
+  useEffect(() => {
+    if (sessionStorage.getItem("perfy_intro_seen") === "1") {
+      setShowIntro(false);
+    }
+  }, []);
   const handleComplete = useCallback(() => {
     sessionStorage.setItem("perfy_intro_seen", "1");
     setShowIntro(false);
