@@ -129,9 +129,8 @@ function AdminPage() {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                tab === t.id ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${tab === t.id ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
             >
               <t.icon className="w-4 h-4" /> {t.label}
             </button>
