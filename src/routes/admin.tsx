@@ -64,7 +64,7 @@ function AdminPage() {
           <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 mx-auto mb-6 shadow-lg">
             <Lock className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-xl font-bold text-center text-foreground mb-1">Perfy Admin Dashboard</h1>
+          <h1 className="text-xl font-bold text-center text-foreground mb-1">Perfy Admin</h1>
           <p className="text-center text-xs text-muted-foreground mb-6">Manage products, pricing & leads</p>
           <form
             onSubmit={(e) => {
